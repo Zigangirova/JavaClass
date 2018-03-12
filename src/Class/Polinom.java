@@ -1,76 +1,73 @@
 package Class;
 
 public class Polinom {
-    String strCoef;
+    private int[] coefficients;
 
-    public Polinom(String strCoef) {
-        this.strCoef = strCoef;
+    public Polinom(int... coefficients) {
+        this.coefficients = coefficients;
     }
 
 
-    public int[] makeArray(String strCoef) {
-        int length = strCoef.length();
-        int numberMinus = 0;
-        for (int i = 0; i < length; i++) {
-            if (strCoef.charAt(i) == '-') {
-                numberMinus++;
-            }
+    public Polinom summing(Polinom polynomOther) {
+        Polinom polynom = new Polinom(coefficients);
+        int maxLength = Math.max(polynom.coefficients.length, polynomOther.coefficients.length);
+        int minLength = Math.min(polynom.coefficients.length, polynomOther.coefficients.length);
+        int[] newCoefficients = new int[maxLength];
+        int[] maxArray = maxPoly(polynom, polynomOther).coefficients;
+        int[] minArray = minPoly(polynom, polynomOther).coefficients;
+        for (int i = 0; i < maxLength - minLength; i++) {
+            newCoefficients[i] = maxArray[i];
         }
-        int[] res = new int[length - numberMinus];
-        int i = 0;
-        while (i != length) {
-            if (!strCoef.substring(i, i + 1).equals('-'))
-                res[i] = Integer.parseInt(strCoef.substring(i, i + 1));
-            else {
-                strCoef = removeCharAt(strCoef, i);
-                i++;
-                res[i] = -Integer.parseInt(strCoef.substring(i, i + 1));
-            }
-            i++;
+        for (int i = maxLength - minLength; i < maxLength; i++) {
+            newCoefficients[i] = maxArray[i] + minArray[-maxLength + minLength + i];
         }
-        return res;
+        return new Polinom(newCoefficients);
     }
 
-    public static String removeCharAt(String s, int pos) {
-        return s.substring(0, pos) + s.substring(pos + 1);
+
+    public Polinom minus(Polinom polynomOther) {
+        Polinom polynom = new Polinom(coefficients);
+        int maxLength = Math.max(polynom.coefficients.length, polynomOther.coefficients.length);
+        int minLength = Math.min(polynom.coefficients.length, polynomOther.coefficients.length);
+        int[] newCoefficients = new int[maxLength];
+        int[] maxArray = maxPoly(polynom, polynomOther).coefficients;
+        int[] minArray = minPoly(polynom, polynomOther).coefficients;
+        for (int i = 0; i < maxLength - minLength; i++) {
+            newCoefficients[i] = maxArray[i];
+        }
+        for (int i = maxLength - minLength; i < maxLength; i++) {
+            newCoefficients[i] = maxArray[i] - minArray[-maxLength + minLength + i];
+        }
+        for (int i = 0; i < newCoefficients.length; i++) {
+            System.out.println(newCoefficients[i]);
+        }
+        return new Polinom(newCoefficients);
     }
 
-    public int[] summing(String strPolinomOther) {
-        int[] polinom = makeArray(strCoef);
-        int[] polinomOther = makeArray(strPolinomOther);
-        int maxLength = Math.max(polinom.length, strPolinomOther.length());
-        int minLength = Math.min(polinom.length, strPolinomOther.length());
-        int[] res = new int[maxLength];
-        for (int i = 0; i < minLength; i++) {
-            res[i] = polinom[i] + polinomOther[i];
-        }
-        if (polinom.length > polinomOther.length)
-            for (int i = minLength; i < maxLength; i++) {
-                res[i] = polinom[i];
+    public Polinom multiplication(Polinom polynomOther) {
+        Polinom polynom = new Polinom(coefficients);
+        int maxLength = Math.max(polynom.coefficients.length, polynomOther.coefficients.length);
+        int minLength = Math.min(polynom.coefficients.length, polynomOther.coefficients.length);
+        int[] newCoefficients = new int[maxLength + minLength - 1];
+        for (int i = 0; i < polynom.coefficients.length; i++) {
+            for (int j = 0; j < polynomOther.coefficients.length; j++) {
+                newCoefficients[i + j] += polynom.coefficients[i] * polynomOther.coefficients[j];
             }
-        else for (int i = minLength; i < maxLength; i++) {
-            res[i] = polinomOther[i];
         }
-        return res;
+        return new Polinom(newCoefficients);
     }
 
-    public int[] minus(String strPolinomOther) {
-        int[] polinom = makeArray(strCoef);
-        int[] polinomOther = makeArray(strPolinomOther);
-        int maxLength = Math.max(polinom.length, strPolinomOther.length());
-        int minLength = Math.min(polinom.length, strPolinomOther.length());
-        int[] res = new int[maxLength];
-        for (int i = 0; i < minLength; i++) {
-            res[i] = polinom[i] - polinomOther[i];
-        }
-        if (polinom.length > polinomOther.length)
-            for (int i = minLength; i < maxLength; i++) {
-                res[i] = polinom[i];
-            }
-        else for (int i = minLength; i < maxLength; i++) {
-            res[i] = -polinomOther[i];
-        }
-        return res;
 
+    public Polinom maxPoly(Polinom polynom, Polinom polynomOther) {
+        if (polynom.coefficients.length > polynomOther.coefficients.length) return polynom;
+        else return polynomOther;
+    }
+
+
+    public Polinom minPoly(Polinom polynom, Polinom polynomOther) {
+        if (polynom.coefficients.length > polynomOther.coefficients.length) return polynomOther;
+        else return polynom;
     }
 }
+
+
