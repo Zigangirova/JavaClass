@@ -153,7 +153,7 @@ public class Polinom {
             coefficientsToString += coefficients[i] + " ";
         }
         return coefficientsToString;
-    }
+     }
 }
 
 
